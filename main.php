@@ -34,7 +34,7 @@ $coachid = $_GET['id'];
 		  <div class="top-section">
       <div class="container">
       <div class="header">
-        <img src="unnamed.png" alt="">  
+        <img src="images/unnamed.png" alt="">  
       </div>
       <div class="profile">
         <div class="profil-pic">
@@ -51,8 +51,8 @@ $coachid = $_GET['id'];
             </div>
           </div>
           <div class="desc-text">
-            <p>This coach will help you transform your life in just 10 weeks, using Arfeen Khan’s proven system The Incredible You! This coach is trained and certified by Arfeen Khan and will take you through the 10 week coaching. To know more about the Incredible You 10 week coaching, <span ><a href="" style="color:#eb0b00;text-decoration: underline;">watch this video.</a></span> If you’re interested in getting coached, click the button below and you will get more details.</p>
-            <button class="request-btn">Request Coaching Details</button>
+            <p><?php echo $row['name']; ?> coach will help you transform your life in just 10 weeks, using Arfeen Khan’s proven system The Incredible You! <?php echo $row['name']; ?> coach is trained and certified by Arfeen Khan and will take you through the 10 week coaching. To know more about the Incredible You 10 week coaching, <span ><a href="" style="color:#eb0b00;text-decoration: underline;">watch this video.</a></span> If you’re interested in getting coached, click the button below and you will get more details.</p>
+            <button class="request-btn" data-toggle="modal" data-target="#myModal">Request Coaching Details</button>
           </div>
         </div>
       </div>
@@ -166,14 +166,70 @@ $cityresult = mysqli_query($conn, $cityname);
 
 	</div>
 </div>
+
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+<!-- Modal content-->
+<div class="modal-content">
+<div class="modal-header">
+<button type="button" class="close" data-dismiss="modal">×</button>
+<h4 class="modal-title">Request Coaching Details</h4>
+</div>
+<div class="modal-body">
+
+        <form role="form" method="post" id="reused_form">
+        
+
+        <div class="form-group">
+            <label for="name">
+                Name:</label>
+            <input type="text" class="form-control"
+            id="name" name="name"   required maxlength="50">
+
+        </div>
+        <div class="form-group">
+            <label for="email">
+                Email:</label>
+            <input type="email" class="form-control"
+            id="email" name="email" required maxlength="50">
+        </div>
+        <div class="form-group">
+            <label for="email">
+                City:</label>
+            <input type="text" class="form-control"
+            id="city" name="city" required>
+        </div>
+        <div class="form-group">
+            <label for="name">
+                Message:</label>
+            <textarea class="form-control" type="textarea" name="message"
+            id="message" placeholder="Your Message Here"
+            maxlength="6000" rows="7"></textarea>
+        </div>
+        <button type="submit" class="request-btn btn-block" id="btnContactUs" style="width: 100%;">Request It! →</button>
+
+    </form>
+    <div id="success_message" style="width:100%; height:100%; display:none; ">
+        <h3>Sent your message successfully!</h3>
+    </div>
+    <div id="error_message"
+    style="width:100%; height:100%; display:none; ">
+        <h3>Error</h3>
+        Sorry there was an error sending your Message.
+
+    </div>
+</div>
+
+</div>
+
+ </div>
+</div>
 <script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/3/froogaloop.js"></script>
 <script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/3/froogaloop.js"></script>
 <script type="text/javascript">
-// $( "#top-image" ).click(function() {
-//   document.getElementById("top-image").style.display = "none";
-//   var iframe = document.getElementById('vimeo');
-
-    function OnSelectChange(abc){
+function OnSelectChange(abc){
       //alert(abc);
       document.getElementById("hideenvalue").value=abc;
         document.getElementById("myForm").submit();
@@ -195,6 +251,54 @@ $cityresult = mysqli_query($conn, $cityname);
           }
       }
   }
+
+</script>
+<script>
+ 
+  $('#reused_form').submit(function(e)
+      {
+        e.preventDefault();  
+               var name = document.getElementById('name').value;
+               var email = document.getElementById('email').value;
+               var city = document.getElementById('city').value;     
+               var message = document.getElementById('message').value;
+               //alert(name);
+          $form = $(this);
+        $('button[type="submit"]', $form).each(function()
+        {
+            $btn = $(this);
+            $btn.prop('type','button' );
+            $btn.prop('orig_label',$btn.text());
+            $btn.text('Sending ...');
+        });
+              $.ajax({
+                type: "POST",
+                url: 'handler.php',
+                data: {name:name,email:email,city:city,message:message} ,
+                 success:function(data){
+                // console.log(data);
+                if(data =='1'){
+                  $('form#reused_form').hide();
+                  $('#success_message').show();
+                   setTimeout(function(){// wait for 5 secs(2)
+                        $('#myModal').fadeOut('slow');
+                        location.reload();
+                    }, 2000);
+                }
+                if(data == '2'){
+                  $('#error_message').show();
+                }        
+                 
+                
+            },
+              error : function(data)
+             {
+              
+            },
+               
+            });
+
+      });
 
 </script>
 </body>
